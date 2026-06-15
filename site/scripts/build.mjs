@@ -71,9 +71,10 @@ function normalize(catalog) {
   const ownerUrl = catalog.owner?.url || "";
   // GitHub handle that owns the marketplace, used to flag "official" plugins.
   const ownerHandle = ownerUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "").toLowerCase();
-  // The `/plugin marketplace add <repo>` slug — derived from the owner repo if
-  // present, else a sensible default matching the README.
-  const marketplaceRepo = catalog.repo || "blixxurd/fidget-marketplace";
+  // Public URL of the catalog the build republishes (dist/marketplace.json).
+  // `/plugin marketplace add` accepts a direct HTTPS URL to a marketplace.json,
+  // so we point users at the domain rather than the GitHub repo slug.
+  const marketplaceUrl = `${SITE_URL}${BASE}/marketplace.json`;
 
   const plugins = (catalog.plugins || []).map((p) => {
     const repo = p.source?.repo || "";
@@ -103,11 +104,11 @@ function normalize(catalog) {
 
   return {
     marketplaceName,
-    marketplaceRepo,
+    marketplaceUrl,
     ownerName,
     ownerUrl,
     description: catalog.description || "",
-    addCommand: `/plugin marketplace add ${marketplaceRepo}`,
+    addCommand: `/plugin marketplace add ${marketplaceUrl}`,
     plugins,
     categories,
   };
