@@ -20,6 +20,13 @@ is just the index; installing a plugin pulls its skills from that plugin's own r
 |---|---|---|
 | `agent-harness` | [`blixxurd/context-agent-harnesses`](https://github.com/blixxurd/context-agent-harnesses) | Cited reference for building agent harnesses: the agentic loop, tool design, context/memory, permissions/sandboxing, subagents, resilience, observability, and evals. |
 
+## Website
+
+The public marketplace site (deployed to [fidget.io](https://fidget.io)) lives in
+[`site/`](site/). It's a static site whose build step compiles this catalog into
+HTML — add a plugin to `marketplace.json`, run `npm run build` in `site/`, and it
+shows up on the site. See [`site/README.md`](site/README.md) for details.
+
 ## Adding a context
 
 1. Create a repo with a `.claude-plugin/plugin.json` and one or more `skills/<name>/SKILL.md`.

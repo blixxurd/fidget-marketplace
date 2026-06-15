@@ -8,6 +8,12 @@
       "source": { "source": "github", "repo": "blixxurd/context-agent-harnesses" },
       "description": "Cited reference for building agent harnesses: the agentic loop, tool design, context/memory, permissions/sandboxing, subagents, resilience, observability, and evals.",
       "license": "MIT"
+    },
+    {
+      "name": "context-skill-builder",
+      "source": { "source": "github", "repo": "blixxurd/context-skill-builder" },
+      "description": "Run deep research on a topic and turn its verified findings into a cited, LLM-navigable context-skill: a pre-joined manifest, anchored guide, provenance chain, and a validator. Ships the build pipeline, a born-green repo skeleton, and a deep-research report → raw_outputs mapper.",
+      "license": "MIT"
     }
   ]
 }
