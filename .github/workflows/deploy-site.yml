@@ -30,17 +30,10 @@ jobs:
         with:
           node-version: 20
       # No dependencies to install — the build uses only Node's stdlib.
-      #
-      # Currently building for the project Pages URL
-      # (https://blixxurd.github.io/fidget-marketplace/) so it can be tested
-      # before fidget.io DNS is configured. When the custom domain is ready,
-      # delete the `env:` block below — the build then uses root-relative paths
-      # and emits the CNAME (fidget.io) automatically.
+      # Production build: root-relative paths, and the build emits the
+      # fidget.io CNAME so this repo's Pages site serves at https://fidget.io/.
       - name: Build site
         working-directory: site
-        env:
-          BASE_PATH: /fidget-marketplace
-          SITE_URL: https://blixxurd.github.io/fidget-marketplace
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
