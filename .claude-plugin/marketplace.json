@@ -1,0 +1,13 @@
+{
+  "name": "fidget",
+  "owner": { "name": "Fidget Softworks, LLC", "url": "https://github.com/blixxurd" },
+  "description": "Pre-curated, quality contexts for Claude Code. Go to fidget, get the right context at the right time.",
+  "plugins": [
+    {
+      "name": "agent-harness",
+      "source": { "source": "github", "repo": "blixxurd/context-agent-harnesses" },
+      "description": "Cited reference for building agent harnesses: the agentic loop, tool design, context/memory, permissions/sandboxing, subagents, resilience, observability, and evals.",
+      "license": "MIT"
+    }
+  ]
+}
