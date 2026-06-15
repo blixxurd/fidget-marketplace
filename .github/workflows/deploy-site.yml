@@ -1,0 +1,58 @@
+name: Deploy site
+
+# Build the fidget.io marketplace site and publish it to GitHub Pages.
+# Runs when the site, the build, or the catalog it compiles from changes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".claude-plugin/marketplace.json"
+      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; let a newer push supersede an in-flight run.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # No dependencies to install — the build uses only Node's stdlib.
+      #
+      # Currently building for the project Pages URL
+      # (https://blixxurd.github.io/fidget-marketplace/) so it can be tested
+      # before fidget.io DNS is configured. When the custom domain is ready,
+      # delete the `env:` block below — the build then uses root-relative paths
+      # and emits the CNAME (fidget.io) automatically.
+      - name: Build site
+        working-directory: site
+        env:
+          BASE_PATH: /fidget-marketplace
+          SITE_URL: https://blixxurd.github.io/fidget-marketplace
+        run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

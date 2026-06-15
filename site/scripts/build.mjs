@@ -17,7 +17,21 @@ const CATALOG_PATH = join(ROOT_DIR, ".claude-plugin", "marketplace.json");
 const ASSETS_DIR = join(SITE_DIR, "assets");
 const DIST_DIR = join(SITE_DIR, "dist");
 
-const SITE_URL = "https://fidget.io";
+// Absolute origin used for canonical/OG/sitemap URLs.
+const SITE_URL = (process.env.SITE_URL || "https://fidget.io").replace(/\/$/, "");
+// Path prefix when the site is NOT served from a domain root — e.g. a GitHub
+// Pages project URL at /<repo>/. Empty for the custom domain. All internal
+// links and asset refs go through href() so this is the only knob.
+const BASE = (process.env.BASE_PATH || "").replace(/\/$/, "");
+// Custom domain served from GitHub Pages, emitted as the CNAME file so Pages
+// keeps the domain bound. Only emitted for a root deploy (BASE empty), so test
+// builds on a project subpath don't hijack an unconfigured domain.
+const SITE_DOMAIN = "fidget.io";
+
+/** Prefix a root-relative path with the base path (if any). */
+function href(path) {
+  return BASE + path;
+}
 
 // ---------------------------------------------------------------------------
 // Small helpers
@@ -129,11 +143,11 @@ function page({ title, description, body, canonical, pluginData }) {
 <meta property="og:type" content="website" />
 <meta property="og:url" content="${esc(canonical)}" />
 <meta name="theme-color" content="#0c0c0f" />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="${href("/favicon.svg")}" type="image/svg+xml" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/styles.css" />
+<link rel="stylesheet" href="${href("/styles.css")}" />
 ${pluginData ? `<script id="plugin-data" type="application/json">${JSON.stringify(pluginData)}</script>` : ""}
 </head>
 <body>
@@ -142,7 +156,7 @@ ${header()}
 ${body}
 </main>
 ${footer()}
-<script src="/app.js" defer></script>
+<script src="${href("/app.js")}" defer></script>
 </body>
 </html>
 `;
@@ -151,13 +165,13 @@ ${footer()}
 function header() {
   return `<header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="${href("/")}">
       <span class="brand-mark" aria-hidden="true"></span>
       <span class="brand-name">fidget</span>
     </a>
     <nav class="header-nav">
-      <a href="/#plugins">Browse</a>
-      <a href="/about/">About</a>
+      <a href="${href("/#plugins")}">Browse</a>
+      <a href="${href("/about/")}">About</a>
       <a href="https://github.com/blixxurd/fidget-marketplace" rel="noopener">GitHub</a>
     </nav>
   </div>
@@ -216,7 +230,7 @@ function pluginCard(p) {
   return `<article class="card" data-name="${esc(p.name.toLowerCase())}" data-desc="${esc(
     p.description.toLowerCase()
   )}" data-category="${esc(p.category)}" data-tags="${esc(p.tags.join(" ").toLowerCase())}">
-  <a class="card-link" href="/plugins/${esc(p.slug)}/">
+  <a class="card-link" href="${esc(href(`/plugins/${p.slug}/`))}">
     <div class="card-head">
       ${pluginIcon(p.name)}
       <div class="card-heading">
@@ -295,7 +309,7 @@ function detailPage(model, p) {
   const body = `
 <article class="detail">
   <div class="wrap">
-    <a class="back" href="/#plugins">← All plugins</a>
+    <a class="back" href="${href("/#plugins")}">← All plugins</a>
 
     <header class="detail-hero">
       ${pluginIcon(p.name)}
@@ -393,7 +407,7 @@ function aboutPage(model) {
       <p>
         Today, most fidget contexts are distilled reference knowledge — cited,
         vetted, and shaped so an agent can actually use it. Like
-        <a href="/plugins/agent-harness/">agent-harness</a>, our reference for
+        <a href="${href("/plugins/agent-harness/")}">agent-harness</a>, our reference for
         building agentic systems.
       </p>
       <p>
@@ -515,7 +529,7 @@ function aboutPage(model) {
     <section class="about-cta">
       <h2 class="section-title">Start fidgeting</h2>
       ${commandBox(model.addCommand, { label: "Add the marketplace", size: "lg" })}
-      <a class="about-browse" href="/#plugins">Browse the catalog →</a>
+      <a class="about-browse" href="${href("/#plugins")}">Browse the catalog →</a>
     </section>
   </div>
 </article>`;
@@ -569,6 +583,11 @@ async function build() {
   // SEO niceties.
   await writeFile(join(DIST_DIR, "sitemap.xml"), sitemap(model));
   await writeFile(join(DIST_DIR, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+
+  // GitHub Pages: skip Jekyll processing always; bind the custom domain only on
+  // a root deploy (a project-subpath test build must not claim fidget.io).
+  await writeFile(join(DIST_DIR, ".nojekyll"), "");
+  if (SITE_DOMAIN && !BASE) await writeFile(join(DIST_DIR, "CNAME"), SITE_DOMAIN + "\n");
 
   console.log(`✓ Built ${model.plugins.length} plugin page(s) → ${DIST_DIR}`);
 }
