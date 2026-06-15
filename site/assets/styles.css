@@ -230,46 +230,6 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-width: 260px;
-  flex: 0 1 320px;
-}
-.search-icon {
-  position: absolute;
-  left: 13px;
-  width: 15px;
-  height: 15px;
-  border: 1.8px solid var(--text-dim);
-  border-radius: 50%;
-}
-.search-icon::after {
-  content: "";
-  position: absolute;
-  width: 6px;
-  height: 1.8px;
-  background: var(--text-dim);
-  transform: rotate(45deg);
-  right: -4px;
-  bottom: 0;
-}
-.search input {
-  width: 100%;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 0.92rem;
-  padding: 10px 14px 10px 36px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-.search input:focus { border-color: var(--accent-line); }
-.search input::placeholder { color: var(--text-dim); }
-
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -486,7 +446,50 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.85rem;
   color: var(--text-dim);
 }
-.detail-about { margin-top: 4px; }
+.install-hint a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+  text-underline-offset: 3px;
+}
+.install-hint a:hover { text-decoration-color: var(--accent); }
+
+.detail-usage { margin-top: 30px; }
+.usage-steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.usage-steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 38px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.usage-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.detail-about { margin-top: 30px; }
 .detail-desc {
   color: var(--text-muted);
   font-size: 1rem;
@@ -689,6 +692,5 @@ a { color: inherit; text-decoration: none; }
   .detail-side { position: static; }
   .hero { padding: 60px 0 40px; }
   .browse-head { flex-direction: column; align-items: stretch; }
-  .search { flex-basis: auto; }
   .stats { grid-template-columns: repeat(2, 1fr); }
 }

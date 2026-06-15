@@ -96,6 +96,9 @@ function normalize(catalog) {
       sourceUrl,
       author,
       isOfficial,
+      // Optional per-plugin usage steps (array of strings) or a paragraph
+      // (string). Falls back to a generic walkthrough in the detail page.
+      howToUse: p.howToUse || p.usage || null,
       installCommand: `/plugin install ${p.name}@${marketplaceName}`,
     };
   });
@@ -168,7 +171,7 @@ function header() {
   <div class="wrap header-inner">
     <a class="brand" href="${href("/")}">
       <span class="brand-mark" aria-hidden="true"></span>
-      <span class="brand-name">fidget</span>
+      <span class="brand-name">fidget.io</span>
     </a>
     <nav class="header-nav">
       <a href="${href("/#plugins")}">Browse</a>
@@ -276,10 +279,6 @@ function landingPage(model) {
   <div class="wrap">
     <div class="browse-head">
       <h2 class="section-title">Browse ${esc(countLabel)}</h2>
-      <div class="search">
-        <span class="search-icon" aria-hidden="true"></span>
-        <input id="search" type="search" placeholder="Search plugins…" autocomplete="off" aria-label="Search plugins" />
-      </div>
     </div>
     ${chips}
     <div class="grid" id="grid">
@@ -334,6 +333,8 @@ function detailPage(model, p) {
           <p class="install-hint">Run these inside Claude Code.</p>
         </section>
 
+        ${usageSection(p)}
+
         <section class="detail-about">
           <h2 class="section-title">About</h2>
           <p class="detail-desc">${esc(p.description)}</p>
@@ -369,6 +370,40 @@ function detailPage(model, p) {
 
 function metaRow(label, value) {
   return `<div class="meta-row"><dt>${label}</dt><dd>${value}</dd></div>`;
+}
+
+/**
+ * "How to use it" — uses the plugin's own `howToUse` if the catalog provides
+ * one (a string paragraph or an array of steps), otherwise a generic
+ * walkthrough that holds for any fidget skill: install, then it auto-triggers.
+ */
+function usageSection(p) {
+  const defaultSteps = [
+    "Install it with the commands above — inside Claude Code.",
+    "Then just work. The skill activates on its own when your task matches what it covers; there's no command to remember.",
+    "It pulls in only the part it needs, section by section, so it stays light on your context window.",
+  ];
+
+  let bodyHtml;
+  if (typeof p.howToUse === "string") {
+    bodyHtml = `<p class="detail-desc">${esc(p.howToUse)}</p>`;
+  } else {
+    const steps = Array.isArray(p.howToUse) && p.howToUse.length ? p.howToUse : defaultSteps;
+    bodyHtml = `<ol class="usage-steps">${steps
+      .map((s) => `<li>${esc(s)}</li>`)
+      .join("")}</ol>`;
+  }
+
+  const sourceHint = p.sourceUrl
+    ? `<p class="install-hint">Want to see exactly what it bundles?
+       <a href="${esc(p.sourceUrl)}" rel="noopener">Browse the source on GitHub →</a></p>`
+    : "";
+
+  return `<section class="detail-usage">
+          <h2 class="section-title">How to use it</h2>
+          ${bodyHtml}
+          ${sourceHint}
+        </section>`;
 }
 
 function aboutPage(model) {

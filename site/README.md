@@ -41,7 +41,7 @@ The catalog is intentionally minimal; the build derives the rest:
 | Site element | Derived from |
 |---|---|
 | Install command | `/plugin install <name>@<marketplace.name>` |
-| "Add marketplace" command | `marketplace.repo` (defaults to `blixxurd/fidget-marketplace`) |
+| "Add marketplace" command | the published catalog URL (`<SITE_URL>/marketplace.json`) |
 | Source link | `source.repo` → `https://github.com/<repo>` |
 | Author | `author`, else the GitHub repo owner |
 | **Official** badge | `source.repo` owned by the marketplace owner's GitHub handle |

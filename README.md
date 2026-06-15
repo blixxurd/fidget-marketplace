@@ -1,7 +1,6 @@
 # fidget
 
 Pre-curated, quality contexts for [Claude Code](https://code.claude.com/docs/en/plugins).
-Go to fidget, get the right context at the right time.
 
 This repo is the **marketplace catalog** — it doesn't contain the contexts themselves. Each
 context lives in its own repo and is listed here as a `github`-sourced plugin. The catalog
@@ -10,7 +9,7 @@ is just the index; installing a plugin pulls its skills from that plugin's own r
 ## Use it
 
 ```
-/plugin marketplace add blixxurd/fidget-marketplace
+/plugin marketplace add https://fidget.io/marketplace.json
 /plugin install agent-harness@fidget
 ```
 

@@ -32,36 +32,23 @@
     }, 1600);
   });
 
-  // --- Search + category filtering (landing page only) ---
-  const search = document.getElementById("search");
+  // --- Category filtering (landing page only) ---
   const grid = document.getElementById("grid");
   if (!grid) return;
   const cards = [...grid.querySelectorAll(".card")];
   const empty = document.getElementById("empty");
   const chips = [...document.querySelectorAll(".chip")];
 
-  let query = "";
   let category = "all";
 
   function apply() {
     let visible = 0;
     for (const card of cards) {
-      const haystack =
-        card.dataset.name + " " + card.dataset.desc + " " + card.dataset.tags;
-      const matchesQuery = !query || haystack.includes(query);
-      const matchesCat = category === "all" || card.dataset.category === category;
-      const show = matchesQuery && matchesCat;
+      const show = category === "all" || card.dataset.category === category;
       card.hidden = !show;
       if (show) visible++;
     }
     if (empty) empty.hidden = visible !== 0;
-  }
-
-  if (search) {
-    search.addEventListener("input", () => {
-      query = search.value.trim().toLowerCase();
-      apply();
-    });
   }
 
   for (const chip of chips) {
