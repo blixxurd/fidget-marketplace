@@ -27,6 +27,9 @@ const BASE = (process.env.BASE_PATH || "").replace(/\/$/, "");
 // keeps the domain bound. Only emitted for a root deploy (BASE empty), so test
 // builds on a project subpath don't hijack an unconfigured domain.
 const SITE_DOMAIN = "fidget.io";
+// Set true to publish the About page (nav link, generated page, sitemap entry).
+// Hidden for now; the aboutPage() source stays intact so this is a one-line flip.
+const SHOW_ABOUT = false;
 
 /** Prefix a root-relative path with the base path (if any). */
 function href(path) {
@@ -175,7 +178,7 @@ function header() {
     </a>
     <nav class="header-nav">
       <a href="${href("/#plugins")}">Browse</a>
-      <a href="${href("/about/")}">About</a>
+      ${SHOW_ABOUT ? `<a href="${href("/about/")}">About</a>` : ""}
       <a href="https://github.com/blixxurd/fidget-marketplace" rel="noopener">GitHub</a>
     </nav>
   </div>
@@ -602,9 +605,11 @@ async function build() {
   // Landing page.
   await writeFile(join(DIST_DIR, "index.html"), landingPage(model));
 
-  // About page.
-  await mkdir(join(DIST_DIR, "about"), { recursive: true });
-  await writeFile(join(DIST_DIR, "about", "index.html"), aboutPage(model));
+  // About page (hidden behind SHOW_ABOUT for now).
+  if (SHOW_ABOUT) {
+    await mkdir(join(DIST_DIR, "about"), { recursive: true });
+    await writeFile(join(DIST_DIR, "about", "index.html"), aboutPage(model));
+  }
 
   // Per-plugin pages at /plugins/<slug>/index.html (clean URLs).
   for (const p of model.plugins) {
@@ -631,7 +636,7 @@ async function build() {
 function sitemap(model) {
   const urls = [
     `${SITE_URL}/`,
-    `${SITE_URL}/about/`,
+    ...(SHOW_ABOUT ? [`${SITE_URL}/about/`] : []),
     ...model.plugins.map((p) => `${SITE_URL}/plugins/${p.slug}/`),
   ];
   return `<?xml version="1.0" encoding="UTF-8"?>
