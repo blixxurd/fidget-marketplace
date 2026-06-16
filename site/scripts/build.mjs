@@ -9,6 +9,7 @@
 import { readFile, writeFile, mkdir, rm, cp, access } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SITE_DIR = resolve(__dirname, "..");
@@ -34,6 +35,14 @@ const SHOW_ABOUT = false;
 /** Prefix a root-relative path with the base path (if any). */
 function href(path) {
   return BASE + path;
+}
+
+// Content-hash query strings for cached assets, filled in during build() so a
+// changed stylesheet/script busts the browser + CDN cache instead of going
+// stale behind /styles.css and /app.js.
+const assetV = { css: "", js: "" };
+function hash8(buf) {
+  return createHash("sha1").update(buf).digest("hex").slice(0, 8);
 }
 
 // ---------------------------------------------------------------------------
@@ -154,7 +163,7 @@ function page({ title, description, body, canonical, pluginData }) {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="${href("/styles.css")}" />
+<link rel="stylesheet" href="${href("/styles.css")}?v=${assetV.css}" />
 ${pluginData ? `<script id="plugin-data" type="application/json">${JSON.stringify(pluginData)}</script>` : ""}
 </head>
 <body>
@@ -163,7 +172,7 @@ ${header()}
 ${body}
 </main>
 ${footer()}
-<script src="${href("/app.js")}" defer></script>
+<script src="${href("/app.js")}?v=${assetV.js}" defer></script>
 </body>
 </html>
 `;
@@ -268,7 +277,9 @@ function landingPage(model) {
   const body = `
 <section class="hero">
   <div class="wrap">
+    <p class="hero-kicker">Curated skills for Claude Code</p>
     <h1 class="hero-title">Luxury Skills Market</h1>
+    <p class="hero-lede">A small, hand-picked shelf of the finest contexts — each one vetted, engineered, and installed in a single command.</p>
     <div class="hero-cta">
       ${commandBox(model.addCommand, { label: "Add the marketplace", size: "lg" })}
     </div>
@@ -289,8 +300,9 @@ function landingPage(model) {
 </section>`;
 
   return page({
-    title: "fidget — curated contexts for Claude Code",
-    description: model.description,
+    title: "fidget — the Luxury Skills Market for Claude Code",
+    description:
+      "A small, curated market of the finest skills for Claude Code — each one vetted, engineered, and installed in a single command.",
     canonical: SITE_URL + "/",
     body,
     pluginData: { count },
@@ -598,6 +610,11 @@ async function build() {
   if (await exists(ASSETS_DIR)) {
     await cp(ASSETS_DIR, DIST_DIR, { recursive: true });
   }
+
+  // Content-hash the cached assets so changes bust caches (filled before any
+  // page() call, which reads assetV).
+  assetV.css = hash8(await readFile(join(ASSETS_DIR, "styles.css")));
+  assetV.js = hash8(await readFile(join(ASSETS_DIR, "app.js")));
 
   // Landing page.
   await writeFile(join(DIST_DIR, "index.html"), landingPage(model));

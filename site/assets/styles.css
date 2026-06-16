@@ -107,19 +107,29 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  padding: 96px 0 56px;
+  padding: 116px 0 66px;
   text-align: center;
+  isolation: isolate;
 }
-/* Subtle dot-grid behind the hero that dissolves into the page background. */
+/* Dot-grid behind the hero that dissolves into the page background. */
 .hero::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -60px 0 0;
   z-index: -1;
-  background-image: radial-gradient(circle, rgba(124, 108, 255, 0.16) 1px, transparent 1.5px);
-  background-size: 24px 24px;
-  -webkit-mask-image: radial-gradient(120% 95% at 50% 14%, #000 0%, rgba(0, 0, 0, 0.4) 42%, transparent 70%);
-  mask-image: radial-gradient(120% 95% at 50% 14%, #000 0%, rgba(0, 0, 0, 0.4) 42%, transparent 70%);
+  background-image: radial-gradient(circle, rgba(150, 137, 255, 0.32) 1px, transparent 1.7px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(125% 78% at 50% 6%, #000 0%, #000 26%, transparent 68%);
+  mask-image: radial-gradient(125% 78% at 50% 6%, #000 0%, #000 26%, transparent 68%);
+  pointer-events: none;
+}
+/* Soft accent bloom that lifts the headline off the grid. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: -60px 0 0;
+  z-index: -2;
+  background: radial-gradient(44% 46% at 50% 26%, rgba(124, 108, 255, 0.22), transparent 72%);
   pointer-events: none;
 }
 .hero-eyebrow {
@@ -132,17 +142,44 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-muted);
   background: var(--bg-elev);
 }
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 24px;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.hero-kicker::before,
+.hero-kicker::after {
+  content: "";
+  width: 30px;
+  height: 1px;
+}
+.hero-kicker::before { background: linear-gradient(90deg, transparent, var(--accent-line)); }
+.hero-kicker::after { background: linear-gradient(90deg, var(--accent-line), transparent); }
 .hero-title {
-  max-width: 22ch;
-  margin: 0 auto 34px;
-  font-size: clamp(1.95rem, 4vw, 2.9rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  max-width: 15ch;
+  margin: 0 auto 22px;
+  font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   font-weight: 600;
-  background: linear-gradient(176deg, var(--text) 42%, #b3a6ff 130%);
+  background: linear-gradient(178deg, #ffffff 0%, #ece9ff 34%, #a99bff 118%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 6px 34px rgba(124, 108, 255, 0.28));
+}
+.hero-lede {
+  max-width: 46ch;
+  margin: 0 auto 36px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-muted);
 }
 .hero-cta { display: flex; justify-content: center; }
 
