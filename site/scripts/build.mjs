@@ -269,9 +269,7 @@ function landingPage(model) {
   const body = `
 <section class="hero">
   <div class="wrap">
-    <p class="hero-eyebrow">Curated contexts for Claude Code</p>
-    <h1 class="hero-title">The right context,<br />at the right time.</h1>
-    <p class="hero-sub">${esc(model.description)}</p>
+    <h1 class="hero-title">${esc(model.description)}</h1>
     <div class="hero-cta">
       ${commandBox(model.addCommand, { label: "Add the marketplace", size: "lg" })}
     </div>
