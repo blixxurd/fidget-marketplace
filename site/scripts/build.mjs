@@ -264,7 +264,7 @@ function pluginCard(p) {
 
 function landingPage(model) {
   const count = model.plugins.length;
-  const countLabel = count === 1 ? "1 plugin" : `${count} plugins`;
+  const countLabel = count === 1 ? "1 skill" : `${count} skills`;
   const chips = model.categories.length
     ? `<div class="chips" id="chips">
         <button class="chip is-active" data-filter="all" type="button">All</button>
@@ -277,9 +277,9 @@ function landingPage(model) {
   const body = `
 <section class="hero">
   <div class="wrap">
-    <p class="hero-kicker">Curated skills for Claude Code</p>
-    <h1 class="hero-title">Luxury Skills Market</h1>
-    <p class="hero-lede">A small, hand-picked shelf of the finest contexts — each one vetted, engineered, and installed in a single command.</p>
+    <p class="hero-kicker">fidget.io is proud to present</p>
+    <h1 class="hero-title">A Luxury Skills Market</h1>
+    <p class="hero-lede">A small, hand-picked collection of the finest top shelf skills for your AI agent.</p>
     <div class="hero-cta">
       ${commandBox(model.addCommand, { label: "Add the marketplace", size: "lg" })}
     </div>
@@ -295,7 +295,7 @@ function landingPage(model) {
     <div class="grid" id="grid">
       ${model.plugins.map(pluginCard).join("\n")}
     </div>
-    <p class="empty" id="empty" hidden>No plugins match your search.</p>
+    <p class="empty" id="empty" hidden>No skills match.</p>
   </div>
 </section>`;
 
@@ -321,7 +321,7 @@ function detailPage(model, p) {
   const body = `
 <article class="detail">
   <div class="wrap">
-    <a class="back" href="${href("/#plugins")}">← All plugins</a>
+    <a class="back" href="${href("/#plugins")}">← All skills</a>
 
     <header class="detail-hero">
       ${pluginIcon(p.name)}

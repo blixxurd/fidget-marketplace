@@ -1,7 +1,7 @@
 {
   "name": "fidget",
   "owner": { "name": "Fidget Softworks, LLC", "url": "https://github.com/blixxurd" },
-  "description": "Pre-curated, quality contexts for Claude Code.",
+  "description": "Pre-curated, quality skills for Claude Code.",
   "plugins": [
     {
       "name": "agent-harness",
