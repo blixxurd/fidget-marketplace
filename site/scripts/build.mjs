@@ -189,7 +189,6 @@ function footer() {
   const year = 2026;
   return `<footer class="site-footer">
   <div class="wrap footer-inner">
-    <span>fidget — the right context at the right time.</span>
     <span class="muted">© ${year} Fidget Softworks, LLC</span>
   </div>
 </footer>`;
@@ -269,7 +268,7 @@ function landingPage(model) {
   const body = `
 <section class="hero">
   <div class="wrap">
-    <h1 class="hero-title">${esc(model.description)}</h1>
+    <h1 class="hero-title">Luxury Skills Market</h1>
     <div class="hero-cta">
       ${commandBox(model.addCommand, { label: "Add the marketplace", size: "lg" })}
     </div>
