@@ -1,19 +1,21 @@
 {
   "name": "fidget",
   "owner": { "name": "Fidget Softworks, LLC", "url": "https://github.com/blixxurd" },
-  "description": "Pre-curated, quality skills for Claude Code.",
+  "description": "Pre-curated, quality plugins for Claude Code.",
   "plugins": [
     {
       "name": "agent-harness",
       "source": { "source": "github", "repo": "blixxurd/context-agent-harnesses" },
       "description": "Cited reference for building agent harnesses: the agentic loop, tool design, context/memory, permissions/sandboxing, subagents, resilience, observability, and evals.",
-      "license": "MIT"
+      "license": "MIT",
+      "provides": ["skill"]
     },
     {
       "name": "context-skill-builder",
       "source": { "source": "github", "repo": "blixxurd/context-skill-builder" },
       "description": "Run deep research on a topic and turn its verified findings into a cited, LLM-navigable context-skill: a pre-joined manifest, anchored guide, provenance chain, and a validator. Ships the build pipeline, a born-green repo skeleton, and a deep-research report → raw_outputs mapper.",
-      "license": "MIT"
+      "license": "MIT",
+      "provides": ["skill", "command", "hook"]
     }
   ]
 }

@@ -403,6 +403,37 @@ a { color: inherit; text-decoration: none; }
   padding: 3px 9px;
 }
 
+/* Component-type badges — what a plugin ships (skill/command/hook/…). */
+.type-badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 0 0 14px;
+}
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 6px;
+  padding: 3px 9px;
+}
+.type-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.detail-heading .type-badges { margin-bottom: 10px; }
+
 .empty {
   text-align: center;
   color: var(--text-muted);

@@ -96,6 +96,8 @@ function normalize(catalog) {
       !!ownerHandle && repo.toLowerCase().startsWith(ownerHandle + "/");
     // Tags: explicit `tags`/`keywords` if the author provides them, else none.
     const tags = (p.tags || p.keywords || []).filter(Boolean);
+    // Component types this plugin ships (skill, command, hook, agent, …).
+    const provides = (p.provides || []).filter(Boolean).map(String);
     return {
       name: p.name,
       slug: slugify(p.name),
@@ -103,6 +105,7 @@ function normalize(catalog) {
       summary: p.summary || firstSentence(p.description || ""),
       category: p.category || "",
       tags,
+      provides,
       license: p.license || "",
       repo,
       sourceUrl,
@@ -224,6 +227,28 @@ function tagPills(tags) {
     .join("")}</ul>`;
 }
 
+// Display names for Claude Code plugin component types.
+const TYPE_LABELS = {
+  skill: "Skill",
+  command: "Command",
+  agent: "Agent",
+  hook: "Hook",
+  mcp: "MCP server",
+  "mcp-server": "MCP server",
+  context: "Context",
+};
+function typeLabel(t) {
+  return TYPE_LABELS[t.toLowerCase()] || t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+/** Component-type badges — what a plugin ships (skill, command, hook, …). */
+function typeBadges(provides) {
+  if (!provides.length) return "";
+  return `<ul class="type-badges">${provides
+    .map((t) => `<li class="type-badge">${esc(typeLabel(t))}</li>`)
+    .join("")}</ul>`;
+}
+
 function pluginIcon(name) {
   // Deterministic monogram tile — derives a hue from the name so each plugin
   // gets a stable, distinct accent without shipping per-plugin art.
@@ -256,6 +281,7 @@ function pluginCard(p) {
       </div>
     </div>
     <p class="card-desc">${esc(p.summary || p.description)}</p>
+    ${typeBadges(p.provides)}
     ${tagPills(p.tags.slice(0, 3))}
   </a>
   ${commandBox(p.installCommand, { size: "sm" })}
@@ -264,7 +290,7 @@ function pluginCard(p) {
 
 function landingPage(model) {
   const count = model.plugins.length;
-  const countLabel = count === 1 ? "1 skill" : `${count} skills`;
+  const countLabel = count === 1 ? "1 plugin" : `${count} plugins`;
   const chips = model.categories.length
     ? `<div class="chips" id="chips">
         <button class="chip is-active" data-filter="all" type="button">All</button>
@@ -295,7 +321,7 @@ function landingPage(model) {
     <div class="grid" id="grid">
       ${model.plugins.map(pluginCard).join("\n")}
     </div>
-    <p class="empty" id="empty" hidden>No skills match.</p>
+    <p class="empty" id="empty" hidden>No plugins match.</p>
   </div>
 </section>`;
 
@@ -321,7 +347,7 @@ function detailPage(model, p) {
   const body = `
 <article class="detail">
   <div class="wrap">
-    <a class="back" href="${href("/#plugins")}">← All skills</a>
+    <a class="back" href="${href("/#plugins")}">← All plugins</a>
 
     <header class="detail-hero">
       ${pluginIcon(p.name)}
@@ -330,6 +356,7 @@ function detailPage(model, p) {
         <p class="detail-author">by ${esc(p.author)}${
     p.isOfficial ? ` <span class="badge badge-official">Official</span>` : ""
   }</p>
+        ${typeBadges(p.provides)}
         ${tagPills(p.tags)}
       </div>
     </header>
@@ -356,6 +383,7 @@ function detailPage(model, p) {
       <aside class="detail-side">
         <dl class="meta">
           ${metaRow("Publisher", esc(p.author))}
+          ${p.provides.length ? metaRow("Provides", p.provides.map((t) => esc(typeLabel(t))).join(", ")) : ""}
           ${p.license ? metaRow("License", esc(p.license)) : ""}
           ${p.category ? metaRow("Category", esc(p.category)) : ""}
           ${p.isOfficial ? metaRow("Status", `<span class="badge badge-official">Official</span>`) : metaRow("Status", "Community")}
